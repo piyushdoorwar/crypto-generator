@@ -22,22 +22,21 @@
   const passwordOutput = document.getElementById('passwordOutput');
   const copyPasswordBtn = document.getElementById('copyPasswordBtn');
   const regenPasswordBtn = document.getElementById('regenPasswordBtn');
-  const generatePasswordBtn = document.getElementById('generatePasswordBtn');
   const strengthFill = document.getElementById('strengthFill');
   const strengthText = document.getElementById('strengthText');
 
-  const optUpper = document.getElementById('optUpper');
-  const optLower = document.getElementById('optLower');
+  const alphaRadios = Array.from(document.querySelectorAll('input[name="alphaCase"]'));
+  const alphaMin = document.getElementById('alphaMin');
   const optNumbers = document.getElementById('optNumbers');
+  const numMin = document.getElementById('numMin');
   const optSymbols = document.getElementById('optSymbols');
+  const symMin = document.getElementById('symMin');
   const optAvoid = document.getElementById('optAvoid');
 
   const bulkToggle = document.getElementById('bulkToggle');
   const bulkControls = document.getElementById('bulkControls');
   const bulkCount = document.getElementById('bulkCount');
-  const bulkGenerateBtn = document.getElementById('bulkGenerateBtn');
-  const bulkCopyBtn = document.getElementById('bulkCopyBtn');
-  const bulkList = document.getElementById('bulkList');
+  const bulkDownloadBtn = document.getElementById('bulkDownloadBtn');
 
   const hashInput = document.getElementById('hashInput');
   const saltInput = document.getElementById('saltInput');
@@ -76,36 +75,86 @@
     return array;
   };
 
-  const getSelectedSets = () => {
-    const sets = [];
-    if (optUpper.checked) sets.push(charSets.upper);
-    if (optLower.checked) sets.push(charSets.lower);
-    if (optNumbers.checked) sets.push(charSets.numbers);
-    if (optSymbols.checked) sets.push(charSets.symbols);
+  const applySimilarFilter = (set) =>
+    optAvoid.checked ? set.split('').filter((ch) => !similarChars.has(ch)).join('') : set;
 
-    if (optAvoid.checked) {
-      return sets.map((set) => set.split('').filter((ch) => !similarChars.has(ch)).join(''));
+  const getAlphaSelection = () => alphaRadios.find((radio) => radio.checked)?.value || 'mixed';
+
+  const getMinValue = (input, fallback = 1) => Math.max(1, Number(input.value) || fallback);
+
+  const buildRequirements = () => {
+    const length = Number(lengthSlider.value);
+    const minAlpha = getMinValue(alphaMin, 1);
+    const minNumbers = optNumbers.checked ? getMinValue(numMin, 1) : 0;
+    const minSymbols = optSymbols.checked ? getMinValue(symMin, 1) : 0;
+
+    const selection = getAlphaSelection();
+    const lowerSet = applySimilarFilter(charSets.lower);
+    const upperSet = applySimilarFilter(charSets.upper);
+    const numberSet = applySimilarFilter(charSets.numbers);
+    const symbolSet = applySimilarFilter(charSets.symbols);
+
+    const requirements = [];
+    const poolChars = new Set();
+
+    const addRequirement = (set, count) => {
+      if (!set || count <= 0) return;
+      requirements.push({ set, count });
+      for (const ch of set) {
+        poolChars.add(ch);
+      }
+    };
+
+    if (selection === 'mixed') {
+      addRequirement(lowerSet, 1);
+      addRequirement(upperSet, 1);
+      const extraLetters = Math.max(minAlpha - 2, 0);
+      addRequirement(`${lowerSet}${upperSet}`, extraLetters);
+    } else if (selection === 'lower') {
+      addRequirement(lowerSet, minAlpha);
+    } else {
+      addRequirement(upperSet, minAlpha);
     }
 
-    return sets;
+    if (optNumbers.checked) {
+      addRequirement(numberSet, minNumbers);
+    }
+    if (optSymbols.checked) {
+      addRequirement(symbolSet, minSymbols);
+    }
+
+    const totalRequired = requirements.reduce((sum, req) => sum + req.count, 0);
+    if (totalRequired > length) {
+      return { length, requirements, pool: '', error: 'Increase length or lower minimums.' };
+    }
+
+    const pool = Array.from(poolChars).join('');
+    if (!pool) {
+      return { length, requirements, pool: '', error: 'Select at least one option.' };
+    }
+
+    return { length, requirements, pool, error: '' };
   };
 
   const generatePassword = () => {
-    const length = Number(lengthSlider.value);
-    const sets = getSelectedSets().filter((set) => set.length > 0);
-
-    if (sets.length === 0) {
-      return '';
+    const { length, requirements, pool, error } = buildRequirements();
+    if (error) {
+      return { password: '', error };
     }
 
-    const requiredChars = sets.map((set) => randomChar(set));
-    const combined = sets.join('');
+    const requiredChars = [];
+    requirements.forEach(({ set, count }) => {
+      for (let i = 0; i < count; i += 1) {
+        requiredChars.push(randomChar(set));
+      }
+    });
+
     const remaining = Array.from({ length: Math.max(length - requiredChars.length, 0) }, () =>
-      randomChar(combined)
+      randomChar(pool)
     );
 
     const result = shuffle(requiredChars.concat(remaining)).slice(0, length);
-    return result.join('');
+    return { password: result.join(''), error: '' };
   };
 
   const scoreStrength = (length, variety) => {
@@ -123,7 +172,7 @@
 
   const updateStrength = (password) => {
     const length = password.length;
-    const variety = [optUpper, optLower, optNumbers, optSymbols].filter((opt) => opt.checked).length;
+    const variety = 1 + (optNumbers.checked ? 1 : 0) + (optSymbols.checked ? 1 : 0);
     const score = length === 0 ? 0 : scoreStrength(length, variety);
     const label = strengthLabel(score);
 
@@ -133,23 +182,21 @@
   };
 
   const updatePasswordPreview = () => {
-    const password = generatePassword();
+    const { password, error } = generatePassword();
     passwordOutput.value = password;
-    passwordOutput.placeholder = password ? '' : 'Select at least one option.';
+    passwordOutput.placeholder = password ? '' : error || 'Select at least one option.';
     updateStrength(password);
   };
 
   const updateBulkButton = () => {
-    const count = Number(bulkCount.value) || 10;
-    bulkGenerateBtn.textContent = `Generate ${count} passwords`;
+    const raw = Number(bulkCount.value) || 10;
+    const count = Math.max(2, Math.min(1000, raw));
+    bulkCount.value = count;
+    bulkDownloadBtn.textContent = `Download ${count} passwords`;
   };
 
   const setBulkActive = (isActive) => {
     bulkControls.classList.toggle('active', isActive);
-    bulkList.classList.toggle('active', isActive);
-    if (!isActive) {
-      bulkList.innerHTML = '';
-    }
   };
 
   const copyText = async (text, button) => {
@@ -172,30 +219,22 @@
     }
   };
 
-  const renderBulkList = (items) => {
-    bulkList.innerHTML = '';
-    items.forEach((item, index) => {
-      const li = document.createElement('li');
-      li.className = 'bulk-item';
-      const indexSpan = document.createElement('span');
-      indexSpan.className = 'bulk-index';
-      indexSpan.textContent = `${index + 1}`;
-      const textSpan = document.createElement('span');
-      textSpan.className = 'bulk-text';
-      textSpan.textContent = item;
-      const copyBtn = document.createElement('button');
-      copyBtn.className = 'mini-copy';
-      copyBtn.type = 'button';
-      copyBtn.innerHTML = `
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
-          <path d="M9 9h11v11H9z" />
-          <path d="M4 4h11v11H4z" />
-        </svg>
-      `;
-      copyBtn.addEventListener('click', () => copyText(item, copyBtn));
-      li.append(indexSpan, textSpan, copyBtn);
-      bulkList.appendChild(li);
-    });
+  const generateBulkItems = () => {
+    const count = Math.max(2, Math.min(1000, Number(bulkCount.value) || 10));
+    const items = [];
+    for (let i = 0; i < count; i += 1) {
+      const { password, error } = generatePassword();
+      if (error) {
+        return [];
+      }
+      items.push(password);
+    }
+    return items;
+  };
+
+  const updateMinState = () => {
+    numMin.disabled = !optNumbers.checked;
+    symMin.disabled = !optSymbols.checked;
   };
 
   lengthSlider.addEventListener('input', () => {
@@ -203,29 +242,36 @@
     updatePasswordPreview();
   });
 
-  [optUpper, optLower, optNumbers, optSymbols, optAvoid].forEach((opt) =>
-    opt.addEventListener('change', updatePasswordPreview)
-  );
+  alphaRadios.forEach((radio) => radio.addEventListener('change', updatePasswordPreview));
+  [alphaMin, numMin, symMin].forEach((input) => input.addEventListener('input', updatePasswordPreview));
 
-  generatePasswordBtn.addEventListener('click', updatePasswordPreview);
+  [optNumbers, optSymbols].forEach((opt) =>
+    opt.addEventListener('change', () => {
+      updateMinState();
+      updatePasswordPreview();
+    })
+  );
+  optAvoid.addEventListener('change', updatePasswordPreview);
   regenPasswordBtn.addEventListener('click', updatePasswordPreview);
 
   copyPasswordBtn.addEventListener('click', () => copyText(passwordOutput.value, copyPasswordBtn));
 
   bulkToggle.addEventListener('change', (event) => setBulkActive(event.target.checked));
   bulkCount.addEventListener('input', updateBulkButton);
+  bulkCount.addEventListener('blur', updateBulkButton);
 
-  bulkGenerateBtn.addEventListener('click', () => {
-    const count = Math.max(2, Math.min(50, Number(bulkCount.value) || 10));
-    const items = Array.from({ length: count }, () => generatePassword()).filter(Boolean);
-    renderBulkList(items);
-  });
-
-  bulkCopyBtn.addEventListener('click', () => {
-    const items = Array.from(bulkList.querySelectorAll('.bulk-text')).map((node) => node.textContent);
-    if (items.length) {
-      copyText(items.join('\n'), bulkCopyBtn);
-    }
+  bulkDownloadBtn.addEventListener('click', () => {
+    const list = generateBulkItems();
+    if (!list.length) return;
+    const blob = new Blob([list.join('\n')], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'passwords.txt';
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
   });
 
   const bufferToHex = (buffer) =>
@@ -458,6 +504,7 @@
   algoSelect.addEventListener('change', runHashGeneration);
 
   updateBulkButton();
+  updateMinState();
   setBulkActive(false);
   updatePasswordPreview();
   renderHashList([]);

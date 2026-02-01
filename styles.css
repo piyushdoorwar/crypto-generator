@@ -1614,7 +1614,111 @@ textarea::selection {
   height: 16px;
 }
 
+.card-subheader {
+  margin-top: 0.6rem;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+.options-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.option-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.option-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.option-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.option-row-inline {
+  justify-content: flex-start;
+}
+
+.radio-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.radio-pill {
+  position: relative;
+  padding: 0.5rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.radio-pill input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.radio-pill:has(input:checked) {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(103, 57, 183, 0.2));
+  border-color: rgba(255, 215, 0, 0.5);
+  color: var(--text);
+  box-shadow: var(--shadow-sm);
+}
+
+.radio-pill:hover {
+  border-color: var(--accent-purple-light);
+  color: var(--text);
+}
+
+.min-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 140px;
+}
+
+.min-field label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+}
+
+.checkbox-pill {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.min-field input:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
 .output-card {
+  gap: 1.2rem;
+}
+
+.output-main {
+  display: flex;
+  flex-direction: column;
   gap: 1.2rem;
 }
 
@@ -1698,6 +1802,17 @@ textarea::selection {
   font-family: inherit;
   font-weight: 600;
   background-color: var(--panel-bg-elevated);
+}
+
+.crypto-main input[type='number'] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.crypto-main input[type='number']::-webkit-outer-spin-button,
+.crypto-main input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 .crypto-main select option {
