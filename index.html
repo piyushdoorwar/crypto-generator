@@ -50,48 +50,52 @@
               <div class="card-subheader">Options</div>
               <div class="options-stack">
                 <div class="option-block">
-                  <div class="option-title">Alphabets</div>
-                  <div class="option-row">
-                    <div class="radio-group">
-                      <label class="radio-pill">
-                        <input type="radio" name="alphaCase" id="alphaMixed" value="mixed" checked />
-                        <span>Mixed case</span>
-                      </label>
-                      <label class="radio-pill">
-                        <input type="radio" name="alphaCase" id="alphaLower" value="lower" />
-                        <span>Lower case</span>
-                      </label>
-                      <label class="radio-pill">
-                        <input type="radio" name="alphaCase" id="alphaUpper" value="upper" />
-                        <span>Upper case</span>
-                      </label>
+                  <div class="option-grid">
+                    <span class="option-label">Alphabets</span>
+                    <span class="option-label option-label-right">Min letters</span>
+                    <div class="option-control">
+                      <div class="radio-group">
+                        <label class="radio-pill">
+                          <input type="radio" name="alphaCase" id="alphaMixed" value="mixed" checked />
+                          <span>Mixed case</span>
+                        </label>
+                        <label class="radio-pill">
+                          <input type="radio" name="alphaCase" id="alphaLower" value="lower" />
+                          <span>Lower case</span>
+                        </label>
+                        <label class="radio-pill">
+                          <input type="radio" name="alphaCase" id="alphaUpper" value="upper" />
+                          <span>Upper case</span>
+                        </label>
+                      </div>
                     </div>
-                    <div class="min-field">
-                      <label for="alphaMin">Min letters</label>
+                    <div class="option-control option-control-right">
                       <input type="number" id="alphaMin" min="1" max="64" value="1" />
                     </div>
                   </div>
                 </div>
                 <div class="option-block">
-                  <div class="option-row option-row-inline">
+                  <div class="option-grid">
+                    <span class="option-label">Numbers</span>
+                    <span class="option-label option-label-right">Min numbers</span>
                     <label class="option-item checkbox-pill">
                       <input type="checkbox" id="optNumbers" checked />
                       <span>Numbers</span>
                     </label>
-                    <div class="min-field">
-                      <label for="numMin">Min numbers</label>
+                    <div class="option-control option-control-right">
                       <input type="number" id="numMin" min="1" max="64" value="1" />
                     </div>
                   </div>
                 </div>
                 <div class="option-block">
-                  <div class="option-row option-row-inline">
+                  <div class="option-grid">
+                    <span class="option-label">Symbols</span>
+                    <span class="option-label option-label-right">Min symbols</span>
                     <label class="option-item checkbox-pill">
                       <input type="checkbox" id="optSymbols" />
                       <span>Symbols</span>
                     </label>
-                    <div class="min-field">
-                      <label for="symMin">Min symbols</label>
+                    <div class="option-control option-control-right">
                       <input type="number" id="symMin" min="1" max="64" value="1" />
                     </div>
                   </div>
@@ -148,10 +152,16 @@
                   </div>
                 </div>
                 <div class="bulk-controls" id="bulkControls">
-                  <div class="bulk-input">
-                    <span>Count</span>
-                    <input type="number" min="2" max="1000" value="10" id="bulkCount" />
-                  </div>
+                  <input
+                    type="number"
+                    min="2"
+                    max="1000"
+                    value="10"
+                    id="bulkCount"
+                    class="bulk-count-input"
+                    placeholder="Count"
+                    aria-label="Password count"
+                  />
                   <button class="btn btn-secondary" id="bulkDownloadBtn">Download 10 passwords</button>
                 </div>
               </div>

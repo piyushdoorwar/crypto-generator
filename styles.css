@@ -1635,22 +1635,33 @@ textarea::selection {
   gap: 0.6rem;
 }
 
-.option-title {
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--text-secondary);
-}
-
-.option-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
+.option-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(160px, 200px);
+  column-gap: 1rem;
+  row-gap: 0.5rem;
   align-items: center;
-  justify-content: space-between;
 }
 
-.option-row-inline {
-  justify-content: flex-start;
+.option-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+.option-label-right {
+  justify-self: start;
+}
+
+.option-control {
+  display: flex;
+  align-items: center;
+}
+
+.option-control-right {
+  width: 100%;
 }
 
 .radio-group {
@@ -1689,25 +1700,16 @@ textarea::selection {
   color: var(--text);
 }
 
-.min-field {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-  min-width: 140px;
-}
-
-.min-field label {
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--text-muted);
-}
-
 .checkbox-pill {
   background: rgba(255, 255, 255, 0.05);
+  width: 100%;
 }
 
-.min-field input:disabled {
+.option-control-right input {
+  width: 100%;
+}
+
+.option-control-right input:disabled {
   opacity: 0.45;
   cursor: not-allowed;
 }
@@ -1923,20 +1925,8 @@ textarea::selection {
   display: flex;
 }
 
-.bulk-input {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.4rem 0.75rem;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid var(--border);
-  color: var(--text-secondary);
-  font-size: 0.85rem;
-}
-
-.bulk-input input {
-  width: 70px;
+.bulk-count-input {
+  width: 120px;
   text-align: center;
 }
 
