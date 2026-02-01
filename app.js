@@ -42,7 +42,6 @@
   const hashInput = document.getElementById('hashInput');
   const saltInput = document.getElementById('saltInput');
   const algoSelect = document.getElementById('algoSelect');
-  const generateHashBtn = document.getElementById('generateHashBtn');
   const hashList = document.getElementById('hashList');
 
   const similarChars = new Set(['O', '0', 'l', '1']);
@@ -422,7 +421,9 @@
     });
   };
 
-  generateHashBtn.addEventListener('click', async () => {
+  let hashTimer = null;
+
+  const runHashGeneration = async () => {
     const raw = hashInput.value.trim();
     if (!raw) {
       renderHashList([]);
@@ -443,7 +444,18 @@
     }
 
     renderHashList(results);
-  });
+  };
+
+  const scheduleHashGeneration = () => {
+    if (hashTimer) {
+      clearTimeout(hashTimer);
+    }
+    hashTimer = setTimeout(runHashGeneration, 180);
+  };
+
+  hashInput.addEventListener('input', scheduleHashGeneration);
+  saltInput.addEventListener('input', scheduleHashGeneration);
+  algoSelect.addEventListener('change', runHashGeneration);
 
   updateBulkButton();
   setBulkActive(false);

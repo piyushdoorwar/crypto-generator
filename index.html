@@ -145,19 +145,22 @@
                 <label for="saltInput">Salt (optional)</label>
                 <input type="text" id="saltInput" placeholder="Add a salt value" />
               </div>
+              <div class="algo-row">
+                <label for="algoSelect">Algorithm Selector</label>
+                <select id="algoSelect">
+                  <option value="all">All algorithms</option>
+                  <option value="md5">MD5</option>
+                  <option value="sha1">SHA1</option>
+                  <option value="sha256">SHA256</option>
+                  <option value="sha512">SHA512</option>
+                </select>
+              </div>
             </div>
 
             <div class="card reveal" style="--delay: 0.1s">
-              <div class="card-header">Algorithm Selector</div>
-              <select id="algoSelect">
-                <option value="all">All algorithms</option>
-                <option value="md5">MD5</option>
-                <option value="sha1">SHA1</option>
-                <option value="sha256">SHA256</option>
-                <option value="sha512">SHA512</option>
-              </select>
-              <button class="btn btn-primary btn-generate" id="generateHashBtn">Generate Hashes</button>
+              <div class="card-header">Output Controls</div>
               <p class="helper-text">Computed locally in your browser.</p>
+              <p class="helper-text">Updates live as you type or adjust options.</p>
             </div>
 
             <div class="card wide reveal" style="--delay: 0.15s">

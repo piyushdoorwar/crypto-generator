@@ -1697,6 +1697,12 @@ textarea::selection {
   cursor: pointer;
   font-family: inherit;
   font-weight: 600;
+  background-color: var(--panel-bg-elevated);
+}
+
+.crypto-main select option {
+  background: var(--panel-bg);
+  color: var(--text);
 }
 
 .crypto-main input[type='text']:focus,
@@ -1880,6 +1886,19 @@ textarea::selection {
 }
 
 .salt-row label {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+}
+
+.algo-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.algo-row label {
   font-size: 0.8rem;
   text-transform: uppercase;
   letter-spacing: 0.1em;
