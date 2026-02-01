@@ -1926,8 +1926,13 @@ textarea::selection {
 }
 
 .bulk-count-input {
-  width: 120px;
   text-align: center;
+}
+
+.crypto-main .bulk-count-input {
+  width: 110px;
+  max-width: 110px;
+  padding: 0.6rem 0.75rem;
 }
 
 .bulk-list {
