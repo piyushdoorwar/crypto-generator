@@ -22,6 +22,9 @@
   const passwordOutput = document.getElementById('passwordOutput');
   const copyPasswordBtn = document.getElementById('copyPasswordBtn');
   const regenPasswordBtn = document.getElementById('regenPasswordBtn');
+  const securityInfoBtn = document.getElementById('securityInfoBtn');
+  const securityInfoModal = document.getElementById('securityInfoModal');
+  const securityInfoCloseBtn = document.getElementById('securityInfoCloseBtn');
   const strengthFill = document.getElementById('strengthFill');
   const strengthText = document.getElementById('strengthText');
 
@@ -199,14 +202,41 @@
     bulkControls.classList.toggle('active', isActive);
   };
 
+  const openSecurityInfo = () => {
+    if (!securityInfoModal) return;
+    securityInfoModal.classList.add('active');
+    securityInfoModal.setAttribute('aria-hidden', 'false');
+    securityInfoCloseBtn?.focus();
+  };
+
+  const closeSecurityInfo = () => {
+    if (!securityInfoModal) return;
+    securityInfoModal.classList.remove('active');
+    securityInfoModal.setAttribute('aria-hidden', 'true');
+    securityInfoBtn?.focus();
+  };
+
+  const flashActionIcon = (button) => {
+    if (!button) return;
+
+    if (button._actionStateTimeout) {
+      window.clearTimeout(button._actionStateTimeout);
+    }
+
+    button.classList.remove('is-activated');
+    void button.offsetWidth;
+    button.classList.add('is-activated');
+    button._actionStateTimeout = window.setTimeout(() => {
+      button.classList.remove('is-activated');
+      button._actionStateTimeout = null;
+    }, 500);
+  };
+
   const copyText = async (text, button) => {
     if (!text) return;
     try {
       await navigator.clipboard.writeText(text);
-      if (button) {
-        button.classList.add('copied');
-        setTimeout(() => button.classList.remove('copied'), 1200);
-      }
+      flashActionIcon(button);
     } catch (err) {
       const temp = document.createElement('textarea');
       temp.value = text;
@@ -216,6 +246,7 @@
       temp.select();
       document.execCommand('copy');
       document.body.removeChild(temp);
+      flashActionIcon(button);
     }
   };
 
@@ -252,9 +283,26 @@
     })
   );
   optAvoid.addEventListener('change', updatePasswordPreview);
-  regenPasswordBtn.addEventListener('click', updatePasswordPreview);
+  regenPasswordBtn.addEventListener('click', () => {
+    flashActionIcon(regenPasswordBtn);
+    updatePasswordPreview();
+  });
 
   copyPasswordBtn.addEventListener('click', () => copyText(passwordOutput.value, copyPasswordBtn));
+
+  securityInfoBtn?.addEventListener('click', openSecurityInfo);
+  securityInfoCloseBtn?.addEventListener('click', closeSecurityInfo);
+  securityInfoModal?.addEventListener('click', (event) => {
+    if (event.target === securityInfoModal) {
+      closeSecurityInfo();
+    }
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && securityInfoModal?.classList.contains('active')) {
+      closeSecurityInfo();
+    }
+  });
 
   bulkToggle.addEventListener('change', (event) => setBulkActive(event.target.checked));
   bulkCount.addEventListener('input', updateBulkButton);
@@ -456,9 +504,9 @@
       copyBtn.className = 'mini-copy';
       copyBtn.type = 'button';
       copyBtn.innerHTML = `
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
-          <path d="M9 9h11v11H9z" />
-          <path d="M4 4h11v11H4z" />
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="9" y="9" width="13" height="13" rx="2"></rect>
+          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
         </svg>
       `;
       copyBtn.addEventListener('click', () => copyText(value, copyBtn));
