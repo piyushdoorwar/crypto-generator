@@ -1592,12 +1592,13 @@ textarea::selection {
 .mode-tabs {
   display: inline-flex;
   gap: 0.75rem;
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(0, 0, 0, 0.22);
   border: 1px solid var(--border);
   border-radius: 999px;
   padding: 0.4rem;
   align-self: flex-start;
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(10px);
 }
 
 .mode-tab {
@@ -1643,14 +1644,28 @@ textarea::selection {
 }
 
 .card {
-  background: var(--panel-bg);
+  background: rgba(30, 30, 30, 0.72);
   border: 1px solid var(--border);
   border-radius: 20px;
   padding: 1.25rem;
   display: flex;
   flex-direction: column;
   gap: 0.85rem;
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-md), inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(14px);
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 1.25rem;
+  right: 1.25rem;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+  pointer-events: none;
 }
 
 .card.wide {
@@ -1729,12 +1744,13 @@ textarea::selection {
   display: flex;
   align-items: center;
   gap: 0.7rem;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   padding: 0.6rem 0.75rem;
   border-radius: 12px;
   font-size: 0.9rem;
   color: var(--text-secondary);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.015);
 }
 
 .option-item input {
@@ -1804,11 +1820,12 @@ textarea::selection {
   padding: 0.5rem 0.9rem;
   border-radius: 999px;
   border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(255, 255, 255, 0.025);
   color: var(--text-secondary);
   font-size: 0.85rem;
   cursor: pointer;
   transition: all 0.2s ease;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.015);
 }
 
 .radio-pill input {
@@ -1985,10 +2002,11 @@ textarea::selection {
   padding: 0.85rem 1rem;
   border-radius: 12px;
   border: 1px solid var(--border);
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.035);
   color: var(--text);
   font-family: 'JetBrains Mono', 'Courier New', monospace;
   font-size: 0.95rem;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02);
   transition: all 0.2s ease;
 }
 
@@ -2090,14 +2108,15 @@ textarea::selection {
 }
 
 .bulk-panel {
-  background: var(--panel-bg-elevated);
+  background: rgba(37, 37, 37, 0.64);
   border-radius: 20px;
   border: 1px solid var(--border-light);
   padding: 1.25rem;
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255, 255, 255, 0.025);
+  backdrop-filter: blur(10px);
 }
 
 .bulk-header {
@@ -2249,11 +2268,12 @@ textarea::selection {
   gap: 0.8rem;
   align-items: center;
   padding: 0.75rem 0.9rem;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 12px;
   font-family: 'JetBrains Mono', 'Courier New', monospace;
   font-size: 0.85rem;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.015);
 }
 
 .hash-label {
